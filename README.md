@@ -4,6 +4,7 @@
 
 * [Metasploit-Framework 基础](penetration/msf.md)
 * [身份认证攻击](penetration/authentication_attack.md)
+* [文件上传](penetration/file_upload.md)
 
 ## 漏洞
 
