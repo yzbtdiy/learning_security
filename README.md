@@ -1,12 +1,12 @@
 # 网络安全学习笔记
 
-## 渗透
+## Web 安全
 
-* [Metasploit-Framework 基础](penetration/msf.md)
-* [身份认证攻击](penetration/authentication_attack.md)
-* [文件上传](penetration/file_upload.md)
+* [会话技术](web/cookie_session.md)
+* [身份认证攻击](web/authentication_attack.md)
+* [文件上传](web/file_upload.md)
 
-## 漏洞
+## 工具
 
-* [漏洞扫描 Xray 简介](vulnerability/xray.md)
-
+* [Xray 简介](tools/xray.md)
+* [Metasploit-Framework 基础](tools/msf.md)
