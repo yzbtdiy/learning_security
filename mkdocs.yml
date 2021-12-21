@@ -1,0 +1,7 @@
+site_name: Learn Security
+theme:
+  name: material
+  language: zh
+  palette:
+    primary: light-blue
+ 
