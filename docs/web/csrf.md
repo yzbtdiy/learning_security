@@ -20,12 +20,16 @@ XSS 可以通过 `document.cookies` 获取 cookie .
 
 ## CSRF 漏洞挖掘
 
-CSRF 漏洞挖掘思路
+### CSRF 漏洞挖掘思路
 
-黑盒挖掘: 测试一些敏感功能点, 特别关注后台高危功能点, 抓包看是否含有token参数, 如果没有, 再直接
+#### 黑盒挖掘
+
+测试一些敏感功能点, 特别关注后台高危功能点, 抓包看是否含有token参数, 如果没有, 再直接
 请求这个页面, 不带 referer, 如果返回数据还是一样的, 那说明很有可能存在 CSRF 漏洞 .
 
-白盒挖掘: 读取代码的核心文件, 查看里边有没有验证 token 和 referer 相关的代码 . 或者直接搜索 token 这个
+#### 白盒挖掘
+
+读取代码的核心文件, 查看里边有没有验证 token 和 referer 相关的代码 . 或者直接搜索 token 这个
 关键字 , 再去看一下比较关心的功能点的代码有没有验证 . 
 
 DESTOON 从 CSRF 到 GETSHELL: [https://bbs.ichunqiu.com/thread-27413-1-1.html](https://bbs.ichunqiu.com/thread-27413-1-1.html)
@@ -99,10 +103,38 @@ Referer 属性返回载入当前文档的来源文档的 URL, 如果当前文档
 
 在 BurpSuite 中右键 Engagement tools --> Generate CSRF PoC 快速生成 CSRF HTML 页面 . 
 
-
 ## CSRF 漏洞利用
 
+### XSS + CSRF 组合 XSRF
 
+1. 通过信息检索发现网站的 CMS 相关信息
+2. 通过 CMS 信息搜索历史漏洞, 发现论坛留言板存在 XSS 漏洞, 后台用户修改密码存在 CSRF 漏洞
+3. 插入 XSS 漏洞 Payload, 目的为触发 CSRF 漏洞修改用户密码
+4. 网站用户登录后查看留言触发漏洞
+
+修改 DVWA 安全等级为 Low, 然后抓取 CSRF 修改密码的请求, 在存储型 XSS 的 message 中插入 img 标签, 当查看这条信息时就会触发 CSRF, 在用户未察觉的情况下修改密码 . 
+
+```html
+//DVWA 限制只能输入 50 个字符, F12 控制台编辑 maxlength 的值可解除该限制
+<textarea name="mtxMessage" cols="50" rows="3" maxlength="50"></textarea>
+```
+
+![image-20211223112511018](https://cdn.jsdelivr.net/gh/yzbtdiy/images@security/web/csrf/image-20211223112511018.png)
+
+### CSRF 漏洞危害
+
+造成的问题可能包括: 个人隐私泄露, 机密资料泄露, 用户甚至企业的财产安全
+
+1. 以受害者名义发邮件, 发消息 . 
+2. 盗取受害者的账号, 甚至购买商品, 虚拟货币转账 . 
+3. 修改受害者的网络配置(比如修改路由器DNS、重置路由器密码) . 
+4. 网站后台创建管理员用户, 破坏网站, 获取服务器权限等 . 
 
 ## CSRF 漏洞防护
 
+### CSRF 常规防御方式
+
+1. 验证请求头中的 HTTP Referer 字段
+2. 在请求包中添加 token 并验证
+3. 在 HTTP 头中自定义属性并验证
+4. 高危操作加入验证码机制
