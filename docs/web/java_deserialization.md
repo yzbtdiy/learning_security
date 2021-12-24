@@ -247,6 +247,40 @@ new ProcessBuilder("/bin/bash", "-c", "open -a Calculator").start();
 
 ## Weblogic反序列化漏洞分析
 
+### CVE-2017-3506 漏洞简介
+
+![image-20211224095543183](https://cdn.jsdelivr.net/gh/yzbtdiy/images@security/web/java_deserialization/image-20211224095543183.png)
+
+* 影响版本: Weblogic 10.3.6.0, 12.1.3.0, 12.2.1.0, 12.2.1.1, 12.2.1.2
+* 漏洞位置: wls-wsat.war
+* 漏洞 URL: /wls-wsat/CoordinatorPortType (POST)
+* 漏洞本质: 构造 SOAP (XML) 格式的请求, 在解析的过程中导致 XMLDecoder 反序列化漏洞
+
+使用 JD-GUI 反编译 jar/root/Oracle/Middleware/wlserver_10.3/lib/weblogic.jar
+
+weblogic.wess.jaxws.workcontent.WorkContextServerTube
+
+```java
+public NextAction processRequest(Packet paramPacket) {
+  this.isUseOldFormat = false;
+  if (paramPacket.getMessage() != null) {
+    HeaderList headerList = paramPacket.getMessage().getHeaders();
+    Header header1 = headerList.get(WorkAreaConstants.WORK_AREA_HEADER, true);
+    if (header1 != null) {
+      readHeaderOld(header1);
+      this.isUseOldFormat = true;
+    }
+    Header header2 = headerList.get(this.JAX_WS_WORK_AREA_HEADER, true);
+    if (header2 != null) {
+      readHeader(header2);
+    }
+    return super.processRequest(paramPacket);
+  }
+}
+```
+
+
+
 * Weblogic反序列化漏洞的基本原理
 * 使用EXP和自动化集成工具进行Weblogic反序列化漏洞的漏洞利用
 * Weblogic反序列化漏洞的更新补丁和绕过原理
