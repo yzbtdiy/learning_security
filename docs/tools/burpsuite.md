@@ -15,6 +15,9 @@ BurpSuite基于Java开发, 新版本要求Java9及以上JDK, 建议使用JDK11
 
 新版BurpSuite官网已开放下载: [https://portswigger.net/Burp/Releases](https://portswigger.net/Burp/Releases)
 
+目前官方下载的 BurpSuite jar 文件已有 500mb 左右大小, 其中包含了多个平台的 chromium 浏览器压缩包, 可以直接删除其他平台的 chromium 浏览器的压缩包1, 这样可以将 jar 文件减小到 200mb 以内.
+
+![image-20211227171032488](https://cdn.jsdelivr.net/gh/yzbtdiy/images@security/tools/burpsuite/image-20211227171032488.png)
 
 ## 注册机
 
