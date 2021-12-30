@@ -1,0 +1,999 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.3">
+    
+    
+      
+        <title>CSRF - Learn Security</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.edf004c2.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.e6a45f82.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#02a6f2">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="light-blue" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#csrf" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="Learn Security" class="md-header__button md-logo" aria-label="Learn Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Learn Security
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CSRF
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Learn Security" class="md-nav__button md-logo" aria-label="Learn Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Learn Security
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Learn Security
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Poc
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Poc" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Poc
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../poc/webmin/" class="md-nav__link">
+        Webmin
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Tools
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tools" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Tools
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/burpsuite/" class="md-nav__link">
+        Burpsuite 简介
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/info_collect/" class="md-nav__link">
+        信息收集
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/msf/" class="md-nav__link">
+        Metasploit-Framework 简介
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/xray/" class="md-nav__link">
+        Xray 漏洞扫描
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Web
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Web" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Web
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authentication_attack/" class="md-nav__link">
+        Authentication attack
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cookie_session/" class="md-nav__link">
+        Cookie session
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          CSRF
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        CSRF
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#csrf_1" class="md-nav__link">
+    CSRF 漏洞原理
+  </a>
+  
+    <nav class="md-nav" aria-label="CSRF 漏洞原理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    漏洞场景
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#csrf_2" class="md-nav__link">
+    CSRF 漏洞挖掘
+  </a>
+  
+    <nav class="md-nav" aria-label="CSRF 漏洞挖掘">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#csrf_3" class="md-nav__link">
+    CSRF 漏洞挖掘思路
+  </a>
+  
+    <nav class="md-nav" aria-label="CSRF 漏洞挖掘思路">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    黑盒挖掘
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    白盒挖掘
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-csrf" class="md-nav__link">
+    GET 型 CSRF
+  </a>
+  
+    <nav class="md-nav" aria-label="GET 型 CSRF">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#referer" class="md-nav__link">
+    突破 Referer 的检测
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#token" class="md-nav__link">
+    突破 Token 检测
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-csrf" class="md-nav__link">
+    POST 型 CSRF
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#csrf_4" class="md-nav__link">
+    CSRF 漏洞利用
+  </a>
+  
+    <nav class="md-nav" aria-label="CSRF 漏洞利用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xss-csrf-xsrf" class="md-nav__link">
+    XSS + CSRF 组合 XSRF
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#csrf_5" class="md-nav__link">
+    CSRF 漏洞危害
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#csrf_6" class="md-nav__link">
+    CSRF 漏洞防护
+  </a>
+  
+    <nav class="md-nav" aria-label="CSRF 漏洞防护">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#csrf_7" class="md-nav__link">
+    CSRF 常规防御方式
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../file_include/" class="md-nav__link">
+        文件包含漏洞
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../file_upload/" class="md-nav__link">
+        文件上传漏洞
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../java_deserialization/" class="md-nav__link">
+        Java deserialization
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../middleware/" class="md-nav__link">
+        常见中间件及漏洞
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sql_injection/" class="md-nav__link">
+        SQL 注入漏洞
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#csrf_1" class="md-nav__link">
+    CSRF 漏洞原理
+  </a>
+  
+    <nav class="md-nav" aria-label="CSRF 漏洞原理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    漏洞场景
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#csrf_2" class="md-nav__link">
+    CSRF 漏洞挖掘
+  </a>
+  
+    <nav class="md-nav" aria-label="CSRF 漏洞挖掘">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#csrf_3" class="md-nav__link">
+    CSRF 漏洞挖掘思路
+  </a>
+  
+    <nav class="md-nav" aria-label="CSRF 漏洞挖掘思路">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    黑盒挖掘
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    白盒挖掘
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-csrf" class="md-nav__link">
+    GET 型 CSRF
+  </a>
+  
+    <nav class="md-nav" aria-label="GET 型 CSRF">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#referer" class="md-nav__link">
+    突破 Referer 的检测
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#token" class="md-nav__link">
+    突破 Token 检测
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-csrf" class="md-nav__link">
+    POST 型 CSRF
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#csrf_4" class="md-nav__link">
+    CSRF 漏洞利用
+  </a>
+  
+    <nav class="md-nav" aria-label="CSRF 漏洞利用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xss-csrf-xsrf" class="md-nav__link">
+    XSS + CSRF 组合 XSRF
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#csrf_5" class="md-nav__link">
+    CSRF 漏洞危害
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#csrf_6" class="md-nav__link">
+    CSRF 漏洞防护
+  </a>
+  
+    <nav class="md-nav" aria-label="CSRF 漏洞防护">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#csrf_7" class="md-nav__link">
+    CSRF 常规防御方式
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+<h1 id="csrf">CSRF</h1>
+<h2 id="csrf_1">CSRF 漏洞原理</h2>
+<p>CSRF(CrossSiteRequestForgery), 中文是跨站点请求伪造. CSRF攻击者在用户已经登录目标网站之后, 诱使用户访问一个攻击页面, 利用目标网站对用户的信任, 以用户身份在攻击页面对目标网站发起伪造用户操作的请求, 比如以你的名义发送邮件, 发消息, 盗取你的账号, 添加系统管理员, 甚至于购买商品, 虚拟货币转账等, 达到攻击目的.</p>
+<p>CSRF 和 XSS 最大的区别就在于, CSRF 并没有盗取 cookie 而是直接利用. </p>
+<p>XSS 可以通过 <code>document.cookies</code> 获取 cookie .</p>
+<h3 id="_1">漏洞场景</h3>
+<ol>
+<li>
+<p>用户打开浏览器, 访问受信任的网站, 但是该网站存在 CSRF 漏洞, 用户输入账号密码正常登录</p>
+</li>
+<li>
+<p>在用户信息通过验证后, 该网站产生了cookie信息并返回给浏览器, 用户登录成功, 可以正常操作</p>
+</li>
+<li>
+<p>用户为退出登录的情况下, 在同一浏览器中, 打开新的 Tab 访问了某个恶意网站</p>
+</li>
+<li>
+<p>恶意网站会返回一些有攻击性的代码, 在用户不知情的情况下利用用户的 cookie 信息对原网站执行某些操作</p>
+</li>
+</ol>
+<h2 id="csrf_2">CSRF 漏洞挖掘</h2>
+<h3 id="csrf_3">CSRF 漏洞挖掘思路</h3>
+<h4 id="_2">黑盒挖掘</h4>
+<p>测试一些敏感功能点, 特别关注后台高危功能点, 抓包看是否含有token参数, 如果没有, 再直接
+请求这个页面, 不带 referer, 如果返回数据还是一样的, 那说明很有可能存在 CSRF 漏洞 .</p>
+<h4 id="_3">白盒挖掘</h4>
+<p>读取代码的核心文件, 查看里边有没有验证 token 和 referer 相关的代码 . 或者直接搜索 token 这个
+关键字 , 再去看一下比较关心的功能点的代码有没有验证 . </p>
+<p>DESTOON 从 CSRF 到 GETSHELL: <a href="https://bbs.ichunqiu.com/thread-27413-1-1.html">https://bbs.ichunqiu.com/thread-27413-1-1.html</a></p>
+<h3 id="get-csrf">GET 型 CSRF</h3>
+<p>修改 DVWA 安全等级为 Low, 然后到 CSRF 测试环境, 用户修改密码需要连续输入两次新密码, </p>
+<p><img alt="image-20211222111848196" src="https://cdn.jsdelivr.net/gh/yzbtdiy/images@security/web/csrf/image-20211222111848196.png" /></p>
+<p>在提交的的时候通过 BurpSuite 抓取数据包, </p>
+<p><img alt="image-20211222113644328" src="https://cdn.jsdelivr.net/gh/yzbtdiy/images@security/web/csrf/image-20211222113644328.png" /></p>
+<p>low 级别的 csrf 环境仅通过 GET 方法进行密码修改, 没有任何校验, 所以通过伪造符合要求的 URL, 诱使用户进行点击就可以做到任意密码的修改.</p>
+<p><img alt="image-20211222113007992" src="https://cdn.jsdelivr.net/gh/yzbtdiy/images@security/web/csrf/image-20211222113007992.png" /></p>
+<p>使用 BurpSuite 的 PoC 生成工具可以快速生成测试页面 .</p>
+<p>为了让受害者无法察觉到攻击或减少对攻击的怀疑, 可以对 PoC 进行改造 . </p>
+<ul>
+<li>删除 <code>&lt;input type="submit" value="Submit request" /&gt;</code> 后页面无提交按钮 </li>
+<li>添加<code>&lt;script&gt;document.forms[0].submit();</code> 自动提交请求, 访问页面直接发送请求</li>
+</ul>
+<p><img alt="image-20211222113939282" src="https://cdn.jsdelivr.net/gh/yzbtdiy/images@security/web/csrf/image-20211222113939282.png" /></p>
+<p>诱导用户点击伪造的链接后密码被修改</p>
+<p><img alt="image-20211222113845636" src="https://cdn.jsdelivr.net/gh/yzbtdiy/images@security/web/csrf/image-20211222113845636.png" /></p>
+<h4 id="referer">突破 Referer 的检测</h4>
+<p>修改 DVWA 的安全等级为 Medium, 此时 CSRF 环境添加了对 Referer 字段的判断, 通过上面的方法使用 BurpSuite 生成的 CSRF HTML 无法修改密码.</p>
+<p><img alt="image-20211222151847590" src="https://cdn.jsdelivr.net/gh/yzbtdiy/images@security/web/csrf/image-20211222151847590.png" /></p>
+<p>Referer 属性返回载入当前文档的来源文档的 URL, 如果当前文档不是通过超级链接访问的, 则为 null, 此属性允许客户端 JavaScript 访问 HTTP 引用头部.</p>
+<p><img alt="image-20211222150244580.png" src="https://cdn.jsdelivr.net/gh/yzbtdiy/images@security/web/csrf/image-20211222150244580.png" /></p>
+<p>由于 Referer 字段可以通过客户端进行控制, 是不可信的字段, 所以在 BurpSuite 中通过 Repeater 发送带有 Referer 的请求或使用 HackBar 为浏览器请求添加 Referer 字段可以绕过,</p>
+<p>尝试在 BurpSuite 生成的 CSRF HTML 中使用 JS 修改 Referer, 但未能成功 ...</p>
+<h4 id="token">突破 Token 检测</h4>
+<p>修改 DVWA 的安全等级为 high, 发现请求中多了 user_token .</p>
+<p><img alt="image-20211222155848579" src="https://cdn.jsdelivr.net/gh/yzbtdiy/images@security/web/csrf/image-20211222155848579.png" /></p>
+<p>此时发送修改密码的请求会提示 CSRF token 不正确, token 在计算机身份认证中表示临时令牌, 每次修改密码都会重置 token, 每次修改密码都会使用新的 token, 所以进行 CSRF 攻击必须获取到有效的 token 才可以 . </p>
+<p><img alt="image-20211222160325054" src="https://cdn.jsdelivr.net/gh/yzbtdiy/images@security/web/csrf/image-20211222160325054.png" /></p>
+<p>在 DVWA 中可以结合反射型 XSS 漏洞获取 CSRF 页面的 token .</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="p">&lt;</span><span class="nt">iframe</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;../csrf&quot;</span> <span class="na">onload</span><span class="o">=</span><span class="s">alert(frames[0].document.getElementsByName(&#39;user_token&#39;)[0].value)</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><img alt="image-20211222162150249" src="https://cdn.jsdelivr.net/gh/yzbtdiy/images@security/web/csrf/image-20211222162150249.png" /></p>
+<p>使用 XSS 获得的 token, 配合 Burpsuite 生成的 CSRF HTML, 可以成功修改密码 . </p>
+<p><img alt="image-20211222162626366" src="https://cdn.jsdelivr.net/gh/yzbtdiy/images@security/web/csrf/image-20211222162626366.png" /></p>
+<h3 id="post-csrf">POST 型 CSRF</h3>
+<p>使用 POST 方式的请求, 无法直接通过 URL 访问的方式触发 CSRF, 需要攻击者构造 POC, 利用其他方式触发漏洞 .</p>
+<p>在 BurpSuite 中右键 Engagement tools --&gt; Generate CSRF PoC 快速生成 CSRF HTML 页面 . </p>
+<h2 id="csrf_4">CSRF 漏洞利用</h2>
+<h3 id="xss-csrf-xsrf">XSS + CSRF 组合 XSRF</h3>
+<ol>
+<li>通过信息检索发现网站的 CMS 相关信息</li>
+<li>通过 CMS 信息搜索历史漏洞, 发现论坛留言板存在 XSS 漏洞, 后台用户修改密码存在 CSRF 漏洞</li>
+<li>插入 XSS 漏洞 Payload, 目的为触发 CSRF 漏洞修改用户密码</li>
+<li>网站用户登录后查看留言触发漏洞</li>
+</ol>
+<p>修改 DVWA 安全等级为 Low, 然后抓取 CSRF 修改密码的请求, 在存储型 XSS 的 message 中插入 img 标签, 当查看这条信息时就会触发 CSRF, 在用户未察觉的情况下修改密码 . </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>//DVWA 限制只能输入 50 个字符, F12 控制台编辑 maxlength 的值可解除该限制
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="p">&lt;</span><span class="nt">textarea</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;mtxMessage&quot;</span> <span class="na">cols</span><span class="o">=</span><span class="s">&quot;50&quot;</span> <span class="na">rows</span><span class="o">=</span><span class="s">&quot;3&quot;</span> <span class="na">maxlength</span><span class="o">=</span><span class="s">&quot;50&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">textarea</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><img alt="image-20211223112511018" src="https://cdn.jsdelivr.net/gh/yzbtdiy/images@security/web/csrf/image-20211223112511018.png" /></p>
+<h3 id="csrf_5">CSRF 漏洞危害</h3>
+<p>造成的问题可能包括: 个人隐私泄露, 机密资料泄露, 用户甚至企业的财产安全</p>
+<ol>
+<li>以受害者名义发邮件, 发消息 . </li>
+<li>盗取受害者的账号, 甚至购买商品, 虚拟货币转账 . </li>
+<li>修改受害者的网络配置(比如修改路由器DNS、重置路由器密码) . </li>
+<li>网站后台创建管理员用户, 破坏网站, 获取服务器权限等 . </li>
+</ol>
+<h2 id="csrf_6">CSRF 漏洞防护</h2>
+<h3 id="csrf_7">CSRF 常规防御方式</h3>
+<ol>
+<li>验证请求头中的 HTTP Referer 字段</li>
+<li>在请求包中添加 token 并验证</li>
+<li>在 HTTP 头中自定义属性并验证</li>
+<li>高危操作加入验证码机制</li>
+</ol>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="页脚">
+      
+        
+        <a href="../cookie_session/" class="md-footer__link md-footer__link--prev" aria-label="上一页: Cookie session" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              Cookie session
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../file_include/" class="md-footer__link md-footer__link--next" aria-label="下一页: 文件包含漏洞" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              文件包含漏洞
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "search": "../../assets/javascripts/workers/search.0bbba5b5.min.js"}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e1a181d9.min.js"></script>
+      
+    
+  </body>
+</html>
